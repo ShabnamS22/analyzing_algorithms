@@ -2,6 +2,7 @@ import time
 import random
 from quicksort import randomized_quicksort, deterministic_quicksort
 
+
 def benchmark(sort_function, arr):
     """
     Measures execution time of a sorting function.
@@ -14,17 +15,17 @@ def benchmark(sort_function, arr):
         Execution time in seconds
     """
     start_time = time.time()
-    sort_function(arr.copy())  # copy prevents modifying original data
+    sort_function(arr.copy())
     end_time = time.time()
     return end_time - start_time
 
 
 def generate_test_cases(n):
     """
-    Generates different input distributions for testing.
+    Generates different input distributions.
 
     Returns:
-        Dictionary of test arrays
+        Dictionary mapping test names to arrays
     """
     return {
         "Random": [random.randint(0, n) for _ in range(n)],
@@ -42,7 +43,15 @@ if __name__ == "__main__":
         test_cases = generate_test_cases(size)
 
         for name, data in test_cases.items():
-            det_time = benchmark(deterministic_quicksort, data)
+
+            # Measure deterministic quicksort safely
+            try:
+                det_time = benchmark(deterministic_quicksort, data)
+                det_result = f"{det_time:.5f}s"
+            except RecursionError:
+                det_result = "RecursionError"
+
+            # Measure randomized quicksort
             rand_time = benchmark(randomized_quicksort, data)
 
-            print(f"{name:20s} | Deterministic: {det_time:.5f}s | Randomized: {rand_time:.5f}s")
+            print(f"{name:20s} | Deterministic: {det_result:15s} | Randomized: {rand_time:.5f}s")
